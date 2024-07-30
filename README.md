@@ -1,5 +1,4 @@
-# NPInstanton
-NPInstanton: A Newman-Penrose Calculator for Instanton Metrics
+# NPInstanton: A Newman-Penrose Calculator for Instanton Metrics
 
 We present a Maple + GRTensorIII-based symbolic calculator for instanton metrics using Newman-Penrose formalism. 
 
@@ -14,6 +13,8 @@ The program comes with three files:
 (iii) eguchihanson: Sample input file containing the information of Eguchi-Hanson instanton
 
 The file NPInstanton_for_Maple11.zip is the first version of the package that runs on Maple 11 and GRTensor II.
+
+The article [https://arxiv.org/abs/0711.0613](https://arxiv.org/abs/0711.0613) involves a review of the theory and the code.
 
 
 Any questions or comments are welcome: birkandant@itu.edu.tr 
