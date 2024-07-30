@@ -6,11 +6,11 @@ Gravitational instantons are exact solutions of Einstein's vacuum field equation
 
 The program comes with three files:
 
-- (i) npinstanton.mws : The main file
+- npinstanton.mws : The main file
 
-- (ii) Tutorial.txt: Help file containing the primary information
-
-- (iii) eguchihanson: Sample input file containing the information of Eguchi-Hanson instanton
+- eguchihanson: Sample input file containing the information of Eguchi-Hanson instanton
+  
+- Tutorial.txt: Help file containing the primary information
 
 - The file NPInstanton_for_Maple11.zip is the first version of the package that runs on Maple 11 and GRTensor II.
 
