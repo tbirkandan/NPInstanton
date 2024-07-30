@@ -1,10 +1,10 @@
 # NPInstanton: A Newman-Penrose Calculator for Instanton Metrics
 
-We present a Maple + GRTensorIII-based symbolic calculator for instanton metrics using Newman-Penrose formalism. 
+We present a Maple and GRTensorIII-based symbolic calculator for instanton metrics using Newman-Penrose formalism. 
 
 Gravitational instantons are exact solutions of Einstein's vacuum field equations with Euclidean signature. The Newman-Penrose formalism, which supplies a toolbox for studying the exact solutions of Einstein's field equations, was adopted to the instanton case and our code translates it for computational use.
 
-The program comes with three files:
+The files:
 
 - **npinstanton.mws**: The main file
 
