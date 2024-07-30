@@ -1,0 +1,164 @@
+NPInstanton HELP FILE
+*********************
+=============
+(A) Introduction
+=============
+The program (or bunch of procedures) calculates physical 
+and mathematical quantities for instanton metrics using 
+Newman-Penrose formalism. It is coded using Maple and the
+external package GRTensorIII.
+
+For the definitions of Newman-Penrose formalism in Euclidean
+space one can refer to (i,ii,iii). The application to the 
+instanton case can be found in (iii).
+
+(i)   E. Goldblatt, Gen. Rel. and Grav. 26, 979, 1994
+(ii)  E. Goldblatt, J. Math. Phys. 35, 3029, 1995
+(iii) A. N. Aliev, Y. Nutku, Class.Quant.Grav.16, 189,1999  
+
+System Requirements:
+-----------------------------
+Any system that can run Maple and GRTensorIII is able to run NPInstanton.
+
+
+====================
+(B) Running The Program
+====================
+
+The program consists of several procedures for calculations. The user 
+runs the procedures by simple commands and the output will be available 
+for further calculations after the calculation is finished. Some commands 
+for the simplification are added to the code but it is always more 
+convenient for the user to choose the right simplification technic for 
+the problem after the calculation. The output must be regarded as a 
+"raw material" for a simplification routine.
+
+The program comes with three files:
+
+(1) NPInstanton program (npinstanton.mws)
+(2) Sample input file (eguchihanson)
+(3) Tutorial.txt (This file).
+
+To run NPInstanton:
+
+(1) Open a worksheet in Maple.
+(2) Run NPInstanton from its location by read command. 
+
+For example, 
+
+read "C:/npinstanton/npinstanton.mws";
+
+runs the program from "C:/npinstanton/" directory.
+
+(3) Enter the input file with its full path as requested.
+
+Now, the program will load GRTensor package, DifferentialGeometry
+package, information from the input file and check the Newman-Penrose
+legs. 
+
+After the program checks the Newman-Penrose legs, the user will be
+prompted as "npinstanton>" and the session is ready for calculations. 
+
+===================
+(C) Available Commands 
+===================
+
+The available commands are
+
+(1)  scalaroperator()
+(2)  dirac()
+(3)  maxwell()
+(4)  gammamatrices()
+(5)  coframe()
+(6)  riccirotcoeff()
+(7)  weylscalar()
+(8)  tfricciscalar()
+(9)  conn1form()
+(10) basis2form()
+(11) curv2form()
+(12) topologicalnumbers()
+
+Command Definitions:
+
+(1) scalaroperator()
+-------------------------
+This command calculates the massless scalar equation, finding the scalar operator. 
+Takes the scalar function (name: scalarfunction) from the input file. The output
+is named as "scalarop" and this can bu used after the calculation in the session. 
+
+(2) dirac()
+-------------
+This command calculates the massless Dirac equations. Dirac equations can be 
+reached by reaching the components of "dirac" matrix. The procedure takes the 
+spinor components from the input file under these names:
+spinorcomponent1, spinorcomponent2, spinorcomponent3, spinorcomponent4.
+
+(3) maxwell()
+-----------------
+This command calculates the source-free Maxwell equations. The output is set to be 
+"maxwell" vector whose components are the Maxwell equations. F_ij's are the usual 
+Maxwell field matrix components. 
+
+(4) gammamatrices()
+--------------------------
+This command finds the covariant and contravariant Dirac gamma matrices and tests 
+them with anticommutation relations. The output is "gamma_contr" and "gamma_covar" 
+vectors. Their components are the Dirac gamma matrices.
+
+(5) coframe()
+-----------------
+This command gives the coframe l and m. The output variables are: 
+"L,M,L_bar,M_bar", for a later use. 
+
+(6) riccirotcoeff()
+----------------------
+This procedure calculates the Ricci rotation coefficients. The output can be used 
+later by calling: "npkappa,nptau,npsigma,nprho,nppi,npnu,npmu,nplambda,npepsilon,
+npgamma,npalpha,npbeta" variables. 
+
+(7) weylscalar()
+--------------------
+This command calculates the Weyl scalars. The output variables are:
+"weylscalar0,weylscalar1,weylscalar2,weylscalar3,weylscalar4, 
+weylscalartilde0,weylscalartilde1,weylscalartilde2,weylscalartilde3
+,weylscalartilde4". "tilde" means the variable has a tilde in the meaning 
+of a different spin frame. Another property of this procedure is that it 
+finds out the Petrov class of the spacetime.
+
+(8) tfricciscalar()
+----------------------
+This command calculates the trace-free Ricci scalars and sets them to these variables
+for a later use:
+"tfricciscalar00,tfricciscalar01,tfricciscalar02,tfricciscalar10,tfricciscalar11,
+tfricciscalar12,tfricciscalar20,tfricciscalar21,tfricciscalar22,tfricciscalarbar22,
+tfricciscalarbar20,tfricciscalarbar21,tfricciscalarbar12". 
+bar denotes complex conjugate.
+
+(9) conn1form()
+---------------------
+This procedure calculates the connection 1-forms. The output can be reached by calling
+"GAMMA00,GAMMA01,GAMMA10,GAMMA11,GAMMAtilde0pr0pr,GAMMAtilde0pr1pr,GAMMAtilde1pr0pr, 
+GAMMApr11" variables in the worksheet. "tilde" means the variable has a tilde and 
+"pr" means "prime" in the meaning of a different spin frame.Other property of the 
+procedure is that, it finds out the gauge by checking the necessary and sufficient 
+conditions for (anti-)self-duality. 
+ 
+(10) basis2form()
+----------------------
+This command finds the basis 2-forms. The output can be reached by these variables: 
+"L00,L01,L10,Ltilde0pr0pr,Ltilde0pr1pr,Ltilde1pr0pr". "tilde" means the variable has 
+a tilde and "pr" means "prime" in the meaning of a different spin frame. 
+
+(11) curv2form()
+----------------------
+This command calculates the curvature 2-forms and sets them to these variables:
+"Theta00,Theta01,Theta10,Thetatilde0pr0pr,Thetatilde0pr1pr,Thetatilde1pr0pr".
+"tilde" means the variable has a tilde and "pr" means "prime" in the meaning 
+of a different spin frame. 
+
+(12) topologicalnumbers()
+-----------------------------------
+This command calculates the integrands of the Euler number and the Hirzebruch
+signature integrals. These numbers are not determined just by these integrals.
+Therefore, the integrals are not calculated. The output can be reached by calling
+"eulernumber_integrand" and "hirzebruch_signature_integrand".

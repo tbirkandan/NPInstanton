@@ -1,0 +1,804 @@
+# This program calculates physical and mathematical 
+# quantities for instanton metrics using Newman-Penrose
+# formalism.  is coded using Maple.  
+# The program needs the external package GRTensorIII.
+
+# Tolga Birkandan
+# Istanbul Technical University, Dept. of Physics
+# Istanbul, Turkey
+# Please send an e-mail for your questions and comments to: birkandant@itu.edu.tr
+
+# This file can be called by 
+
+read "npinstanton.mws" 
+
+or, if it is not in the current directory of Maple,
+
+read "\path\npinstanton.mws" 
+
+command from Maple.
+
+#===================================================================================================================
+# Environmental settings:
+with(grtensor):
+interface(errorbreak=2): #Stop when an error occurred
+interface(showassumed=0): # Do not show "tilde" for the variables with assumptions. 
+interface(warnlevel=0): # No warnings are shown
+
+# Input filename will be entered: 
+interface(prompt="Enter the name of the definition file (include the path): " ):
+filename:=readline():
+interface(prompt="> " ):
+read(filename):
+
+#---
+# This part creates the metric file as npinstanton.mpl in GRTensorIII language 
+# and copies it to the metric directory of GRTensorIII
+g11:=simplify(expand(l_bar_covar[1]*l_covar[1]+l_covar[1]*l_bar_covar[1]+m_bar_covar[1]*m_covar[1]+m_covar[1]*m_bar_covar[1])):
+g12:=simplify(expand(l_bar_covar[1]*l_covar[2]+l_covar[1]*l_bar_covar[2]+m_bar_covar[1]*m_covar[2]+m_covar[1]*m_bar_covar[2])):
+g13:=simplify(expand(l_bar_covar[1]*l_covar[3]+l_covar[1]*l_bar_covar[3]+m_bar_covar[1]*m_covar[3]+m_covar[1]*m_bar_covar[3])):
+g14:=simplify(expand(l_bar_covar[1]*l_covar[4]+l_covar[1]*l_bar_covar[4]+m_bar_covar[1]*m_covar[4]+m_covar[1]*m_bar_covar[4])):
+g22:=simplify(expand(l_bar_covar[2]*l_covar[2]+l_covar[2]*l_bar_covar[2]+m_bar_covar[2]*m_covar[2]+m_covar[2]*m_bar_covar[2])):
+g23:=simplify(expand(l_bar_covar[2]*l_covar[3]+l_covar[2]*l_bar_covar[3]+m_bar_covar[2]*m_covar[3]+m_covar[2]*m_bar_covar[3])):
+g24:=simplify(expand(l_bar_covar[2]*l_covar[4]+l_covar[2]*l_bar_covar[4]+m_bar_covar[2]*m_covar[4]+m_covar[2]*m_bar_covar[4])):
+g33:=simplify(expand(l_bar_covar[3]*l_covar[3]+l_covar[3]*l_bar_covar[3]+m_bar_covar[3]*m_covar[3]+m_covar[3]*m_bar_covar[3])):
+g34:=simplify(expand(l_bar_covar[3]*l_covar[4]+l_covar[3]*l_bar_covar[4]+m_bar_covar[3]*m_covar[4]+m_covar[3]*m_bar_covar[4])):
+g44:=simplify(expand(l_bar_covar[4]*l_covar[4]+l_covar[4]*l_bar_covar[4]+m_bar_covar[4]*m_covar[4]+m_covar[4]*m_bar_covar[4])):
+
+fd := fopen(cat(grOptionMetricPath, "\\npinstanton.mpl"), WRITE):
+	fprintf(fd, "Ndim_ := 4:\n"):
+	fprintf(fd, "x1_ := %a:\n",firstcoordinate):
+	fprintf(fd, "x2_ := %a:\n",secondcoordinate):
+	fprintf(fd, "x3_ := %a:\n",thirdcoordinate):
+	fprintf(fd, "x4_ := %a:\n",fourthcoordinate):
+	fprintf(fd, "complex_ := {}:\n"):
+	if (g11 <> 0) then fprintf(fd, "g11_ := %a:\n",g11): end if:
+	if (g12 <> 0) then fprintf(fd, "g12_ := %a:\n",g12): end if:
+	if (g13 <> 0) then fprintf(fd, "g13_ := %a:\n",g13): end if:
+	if (g14 <> 0) then fprintf(fd, "g14_ := %a:\n",g14): end if:
+	if (g22 <> 0) then fprintf(fd, "g22_ := %a:\n",g22): end if:
+	if (g23 <> 0) then fprintf(fd, "g23_ := %a:\n",g23): end if:
+	if (g24 <> 0) then fprintf(fd, "g24_ := %a:\n",g24): end if:
+	if (g33 <> 0) then fprintf(fd, "g33_ := %a:\n",g33): end if:
+	if (g34 <> 0) then fprintf(fd, "g34_ := %a:\n",g34): end if:
+	if (g44 <> 0) then fprintf(fd, "g44_ := %a:\n",g44): end if:
+fclose(fd);
+unassign('fd','g11','g12','g13','g14','g22','g23','g24','g33','g34','g44'):
+#----
+grtw():qload(npinstanton):grcalc(x(up)): 
+
+grcalcalter(g(dn,dn),6,1):grcalcalter(g(up,up),6,1):
+
+# Coordinate definitions:
+koor[1]:=grcomponent(x(up),[1]):
+koor[2]:=grcomponent(x(up),[2]):
+koor[3]:=grcomponent(x(up),[3]):
+koor[4]:=grcomponent(x(up),[4]): 
+
+# Coordinates of the metric will be set to real values
+assume(koor[1]::real):assume(koor[2]::real):assume(koor[3]::real):assume(koor[4]::real):
+with(linalg):
+#DifferentialGeometry package will be loaded. It will be used for the wedge product calculations. 
+with(DifferentialGeometry):DGsetup([x1,x2,x3,x4],npinstanton,verbose):
+print(`The values of dx1, dx2, dx3, dx4 which will be used by the program are the following in terms of the real coordinates:`):
+print(dx1=d(koor[1])):
+print(dx2=d(koor[2])):
+print(dx3=d(koor[3])):
+print(dx4=d(koor[4])):
+
+# Spinor components will be set.
+psi1(koor[1],koor[2],koor[3],koor[4]):=spinorcomponent1:
+psi2(koor[1],koor[2],koor[3],koor[4]):=spinorcomponent2:
+psi3(koor[1],koor[2],koor[3],koor[4]):=spinorcomponent3:
+psi4(koor[1],koor[2],koor[3],koor[4]):=spinorcomponent4:
+
+#===================================================================================================================
+# NP legs will be set
+l_covar:=Vector([l_covar[1],l_covar[2],l_covar[3],l_covar[4]]):
+m_covar:=Vector([m_covar[1],m_covar[2],m_covar[3],m_covar[4]]):
+l_bar_covar:=Vector([l_bar_covar[1],l_bar_covar[2],l_bar_covar[3],l_bar_covar[4]]):
+m_bar_covar:=Vector([m_bar_covar[1],m_bar_covar[2],m_bar_covar[3],m_bar_covar[4]]):
+
+#Contravariant legs will be found from covariant ones:
+l_contr:=Vector([0,0,0,0]):
+l_bar_contr:=Vector([0,0,0,0]):
+m_contr:=Vector([0,0,0,0]):
+m_bar_contr:=Vector([0,0,0,0]):
+
+for mu from 1 to 4 do
+	for nu from 1 to 4 do
+		l_contr[mu]:=l_contr[mu]+grcomponent(g(up,up),[mu,nu])*l_covar[nu]:
+		m_contr[mu]:=m_contr[mu]+grcomponent(g(up,up),[mu,nu])*m_covar[nu]:
+		l_bar_contr[mu]:=l_bar_contr[mu]+grcomponent(g(up,up),[mu,nu])*l_bar_covar[nu]:
+		m_bar_contr[mu]:=m_bar_contr[mu]+grcomponent(g(up,up),[mu,nu])*m_bar_covar[nu]:
+	od:
+od:
+
+l_covar:=map(simplify,map(expand,l_covar)):
+l_bar_covar:=map(simplify,map(expand,l_bar_covar)):
+m_covar:=map(simplify,map(expand,m_covar)):
+m_bar_covar:=map(simplify,map(expand,m_bar_covar)):
+l_contr:=map(simplify,map(expand,l_contr)):
+l_bar_contr:=map(simplify,map(expand,l_bar_contr)):
+m_contr:=map(simplify,map(expand,m_contr)):
+m_bar_contr:=map(simplify,map(expand,m_bar_contr)):
+
+# NP legs will be tested using their relations
+test1:=0:test2:=0:test3:=0:test4:=0:test5:=0:test6:=0:
+
+for mu from 1 to 4 do
+   test1:=test1+l_covar[mu]*l_bar_contr[mu]:
+   test2:=test2+m_covar[mu]*m_bar_contr[mu]:
+   test3:=test3+l_covar[mu]*l_contr[mu]:
+   test4:=test4+m_covar[mu]*m_contr[mu]:
+   test5:=test5+l_covar[mu]*m_contr[mu]:
+   test6:=test6+l_covar[mu]*m_bar_contr[mu]:
+od:
+
+print(`Testing the NP legs...`):
+# Ten values below must be one
+test1:=simplify(expand(test1)):
+test2:=simplify(expand(test2)):
+test3:=simplify(expand(test3))+1:
+test4:=simplify(expand(test4))+1:
+test5:=simplify(expand(test5))+1:
+test6:=simplify(expand(test6))+1:
+test7:=simplify(expand(l_contr[1]*l_bar_covar[1]+l_bar_contr[1]*l_covar[1]+m_contr[1]*m_bar_covar[1]+m_bar_contr[1]*m_covar[1])):
+test8:=simplify(expand(l_contr[2]*l_bar_covar[2]+l_bar_contr[2]*l_covar[2]+m_contr[2]*m_bar_covar[2]+m_bar_contr[2]*m_covar[2])):
+test9:=simplify(expand(l_contr[3]*l_bar_covar[3]+l_bar_contr[3]*l_covar[3]+m_contr[3]*m_bar_covar[3]+m_bar_contr[3]*m_covar[3])):
+test10:=simplify(expand(l_contr[4]*l_bar_covar[4]+l_bar_contr[4]*l_covar[4]+m_contr[4]*m_bar_covar[4]+m_bar_contr[4]*m_covar[4])):
+if (simplify(expand(test1+test2+test3+test4+test5+test6+test7+test8+test9+test10))=10) 
+ then print (`Test1 -> Success, NP legs are correct`): 
+ else ERROR (`Test1 -> NP legs are NOT CORRECT, CHECK THE DEFINITIONS`): 
+end if:
+
+test2:=0:
+testi:=0:
+# 16 values below must be zero
+for mu from 1 to 4 do
+   for nu from 1 to 4 do  
+      testi:=simplify(expand(grcomponent(g(dn,dn),[mu,nu])
+	                                     -(l_bar_covar[mu]*l_covar[nu]+l_covar[mu]*l_bar_covar[nu]
+										 +m_bar_covar[mu]*m_covar[nu]+m_covar[mu]*m_bar_covar[nu])),symbolic):
+      test2:=test2+testi:
+      testi:=0:
+   od:
+od: 
+if (simplify(expand(test2))=0) 
+ then print (`Test2 -> Success, NP legs are correct`): 
+ else ERROR (`Test2 -> NP legs are NOT CORRECT, CHECK THE DEFINITIONS`): 
+end if:
+
+print(`******************************************`):
+print(`...You may now use the special commands...`):
+print(`scalaroperator(), dirac(), maxwell(),`):
+print(`gammamatrices(), coframe(), riccirotcoeff(),`):
+print(`weylscalar(), tfricciscalar(), conn1form(),`):
+print(`basis2form(), curv2form(), topologicalnumbers()`):
+print(`.......Check the help.txt file for details.......`):
+print(`******************************************`):
+
+#===================================================================================================================
+# Procedure Definitions:
+
+scalaroperator:=proc()
+global scalarop:
+itime:= time():
+print(`--------------------MASSLESS SCALAR EQUATION--------------------`):
+grcalcalter(g(up,up),6,1):
+matdet:=simplify(expand(combine(grcomponent(detg)))):
+
+firstterm:=0:
+secondterm:=0:
+thirdterm:=0:
+
+for mu from 1 to 4 do
+ for nu from 1 to 4 do
+  firstterm:=firstterm+(1/sqrt(abs(matdet)))*diff(sqrt(abs(matdet)),koor[nu])*grcomponent(g(up,up),[mu,nu])*diff(scalarfunction,koor[mu]):
+  secondterm:=secondterm+diff(grcomponent(g(up,up),[mu,nu]),koor[nu])*diff(scalarfunction,koor[mu]):
+  thirdterm:=thirdterm+grcomponent(g(up,up),[mu,nu])*diff(diff(scalarfunction,koor[mu]),koor[nu]):
+ od:
+od:
+scalarop:=simplify(expand(combine(firstterm+secondterm+thirdterm))):
+print(scalarop):
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+print(`Output variable(s): scalarop`):
+end proc:
+
+#===================================================================================================================
+weylscalar:=proc()
+global weylscalar0,weylscalar1,weylscalar2,weylscalar3,weylscalar4,weylscalartilde0,weylscalartilde1,weylscalartilde2,weylscalartilde3,weylscalartilde4:
+itime:= time():
+weylscalarpless():
+
+weylscalar3:=simplify(expand(-conjugate(weylscalar1))) assuming real:
+weylscalar4:=simplify(expand(conjugate(weylscalar0))) assuming real:
+weylscalartilde3:=simplify(expand(-conjugate(weylscalartilde1))) assuming real:
+weylscalartilde4:=simplify(expand(conjugate(weylscalartilde0))) assuming real:
+
+print(`weylscalar0=`,weylscalar0):
+print(`weylscalar1=`,weylscalar1):
+print(`weylscalar2=`,weylscalar2):
+print(`weylscalar3=`,weylscalar3):
+print(`weylscalar4=`,weylscalar4):
+print(`weylscalartilde0=`,weylscalartilde0):
+print(`weylscalartilde1=`,weylscalartilde1):
+print(`weylscalartilde2=`,weylscalartilde2):
+print(`weylscalartilde3=`,weylscalartilde3):
+print(`weylscalartilde4=`,weylscalartilde4):
+
+petrmat1:=Matrix([[weylscalar2-(1/2)*(weylscalar0+conjugate(weylscalar0)),-(I/2)*(weylscalar0-conjugate(weylscalar0)),weylscalar1+conjugate(weylscalar1)],[-(I/2)*(weylscalar0-conjugate(weylscalar0)),weylscalar2+(1/2)*(weylscalar0+conjugate(weylscalar0)),I*(weylscalar1-conjugate(weylscalar1))],[weylscalar1+conjugate(weylscalar1),I*(weylscalar1-conjugate(weylscalar1)),-2*weylscalar2]]):
+petrmat2:=Matrix([[weylscalartilde2-(1/2)*(weylscalartilde0+conjugate(weylscalartilde0)),-(I/2)*(weylscalartilde0-conjugate(weylscalartilde0)),weylscalartilde1+conjugate(weylscalartilde1)],[-(I/2)*(weylscalartilde0-conjugate(weylscalartilde0)),weylscalartilde2+(1/2)*(weylscalartilde0+conjugate(weylscalartilde0)),I*(weylscalartilde1-conjugate(weylscalartilde1))],[weylscalartilde1+conjugate(weylscalartilde1),I*(weylscalartilde1-conjugate(weylscalartilde1)),-2*weylscalartilde2]]):
+eig1:=eigenvalues(petrmat1) assuming real:
+eig2:=eigenvalues(petrmat2) assuming real:
+eig1sum:=simplify(expand(combine(eig1[1]+eig1[2]+eig1[3]))) assuming real:
+eig2sum:=simplify(expand(combine(eig2[1]+eig2[2]+eig2[3]))) assuming real:
+if(weylscalar0<>0 or weylscalar1<>0 or weylscalar2<>0 or weylscalar3<>0 or weylscalar4<>0) then 
+if(simplify(expand(combine(weylscalar2)))<>0 and simplify(expand(combine(weylscalar0)))=0 and simplify(expand(combine(weylscalar1)))=0 and simplify(expand(combine(weylscalar3)))=0 and simplify(expand(combine(weylscalar4)))=0) then print(`Petrov-type D according to self-dual part`)
+elif(eig1sum=0) then print(`Petrov-type I according to self-dual part`) end if;
+
+elif(weylscalartilde0<>0 or weylscalartilde1<>0 or weylscalartilde2<>0 or weylscalartilde3<>0 or weylscalartilde4<>0) then
+if(simplify(expand(combine(weylscalartilde2)))<>0 and simplify(expand(combine(weylscalartilde0)))=0 and simplify(expand(combine(weylscalartilde1)))=0 and simplify(expand(combine(weylscalartilde3)))=0 and simplify(expand(combine(weylscalartilde4)))=0) then print(`Petrov-type D according to anti-self-dual part`)
+elif(eig2sum=0) then print(`Petrov-type I according to anti-self-dual part`) end if;
+else print(`Petrov class cannot be determined, simplification needed`) 
+end if;
+
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+
+print(`Output variable(s): weylscalar0,weylscalar1,weylscalar2,weylscalar3,weylscalar4,`):
+print(`weylscalartilde0,weylscalartilde1,weylscalartilde2,weylscalartilde3,weylscalartilde4`):
+end proc:
+
+#===================================================================================================================
+gammamatrices:=proc()
+global gamma_contr,gamma_covar:
+itime:= time():
+gammamatricespless():
+
+print(`CONTRAVARIANT DIRAC GAMMA MATRICES`):
+for mu from 1 to 4 do 
+	print(gamma_contravariant[mu]=gamma_contr[mu]):
+od:
+
+print(`COVARIANT DIRAC GAMMA MATRICES`):
+for mu from 1 to 4 do 
+	print(gamma_covariant[mu]=gamma_contr[mu]):
+od:
+
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+
+print(`Output variable(s): gamma_contr,gamma_covar vectors`):
+end proc:
+
+#===================================================================================================================
+maxwell:=proc()
+global maxwell:
+itime:= time():
+riccirotcoeffpless():
+
+print(`-------------------SOURCE-FREE MAXWELL EQUATIONS-------------------`):
+
+assume(F12::real):assume(F13::real):assume(F14::real):assume(F23::real):assume(F24::real):assume(F34::real):
+F12:=F12(koor[1],koor[2],koor[3],koor[4]):
+F13:=F13(koor[1],koor[2],koor[3],koor[4]):
+F14:=F14(koor[1],koor[2],koor[3],koor[4]):
+F23:=F23(koor[1],koor[2],koor[3],koor[4]):
+F24:=F24(koor[1],koor[2],koor[3],koor[4]):
+F34:=F34(koor[1],koor[2],koor[3],koor[4]):
+
+
+fie0:=F12*(l_contr[1]*m_contr[2]-l_contr[2]*m_contr[1])+
+      F13*(l_contr[1]*m_contr[3]-l_contr[3]*m_contr[1])+
+	  F14*(l_contr[1]*m_contr[4]-l_contr[4]*m_contr[1])+
+	  F23*(l_contr[2]*m_contr[3]-l_contr[3]*m_contr[2])+
+	  F24*(l_contr[2]*m_contr[4]-l_contr[4]*m_contr[2])+
+	  F34*(l_contr[3]*m_contr[4]-l_contr[4]*m_contr[3]):
+
+fie0tilde:=F12*(m_bar_contr[1]*l_contr[2]-m_bar_contr[2]*l_contr[1])+
+		   F13*(m_bar_contr[1]*l_contr[3]-m_bar_contr[3]*l_contr[1])+
+		   F14*(m_bar_contr[1]*l_contr[4]-m_bar_contr[4]*l_contr[1])+
+		   F23*(m_bar_contr[2]*l_contr[3]-m_bar_contr[3]*l_contr[2])+
+	       F24*(m_bar_contr[2]*l_contr[4]-m_bar_contr[4]*l_contr[2])+
+	       F34*(m_bar_contr[3]*l_contr[4]-m_bar_contr[4]*l_contr[3]):
+
+fie1:=(1/2)*(F12*(l_contr[1]*l_bar_contr[2]+m_contr[1]*m_bar_contr[2]-l_contr[2]*l_bar_contr[1]-m_contr[2]*m_bar_contr[1])+
+			 F13*(l_contr[1]*l_bar_contr[3]+m_contr[1]*m_bar_contr[3]-l_contr[3]*l_bar_contr[1]-m_contr[3]*m_bar_contr[1])+
+			 F14*(l_contr[1]*l_bar_contr[4]+m_contr[1]*m_bar_contr[4]-l_contr[4]*l_bar_contr[1]-m_contr[4]*m_bar_contr[1])+
+			 F23*(l_contr[2]*l_bar_contr[3]+m_contr[2]*m_bar_contr[3]-l_contr[3]*l_bar_contr[2]-m_contr[3]*m_bar_contr[2])+
+			 F24*(l_contr[2]*l_bar_contr[4]+m_contr[2]*m_bar_contr[4]-l_contr[4]*l_bar_contr[2]-m_contr[4]*m_bar_contr[2])+
+			 F34*(l_contr[3]*l_bar_contr[4]+m_contr[3]*m_bar_contr[4]-l_contr[4]*l_bar_contr[3]-m_contr[4]*m_bar_contr[3])):
+
+fie1tilde:=(1/2)*(F12*(l_contr[1]*l_bar_contr[2]-m_contr[1]*m_bar_contr[2]-l_contr[2]*l_bar_contr[1]+m_contr[2]*m_bar_contr[1])+
+				  F13*(l_contr[1]*l_bar_contr[3]-m_contr[1]*m_bar_contr[3]-l_contr[3]*l_bar_contr[1]+m_contr[3]*m_bar_contr[1])+
+				  F14*(l_contr[1]*l_bar_contr[4]-m_contr[1]*m_bar_contr[4]-l_contr[4]*l_bar_contr[1]+m_contr[4]*m_bar_contr[1])+
+				  F23*(l_contr[2]*l_bar_contr[3]-m_contr[2]*m_bar_contr[3]-l_contr[3]*l_bar_contr[2]+m_contr[3]*m_bar_contr[2])+
+				  F24*(l_contr[2]*l_bar_contr[4]-m_contr[2]*m_bar_contr[4]-l_contr[4]*l_bar_contr[2]+m_contr[4]*m_bar_contr[2])+
+				  F34*(l_contr[3]*l_bar_contr[4]-m_contr[3]*m_bar_contr[4]-l_contr[4]*l_bar_contr[3]+m_contr[4]*m_bar_contr[3])):	  
+
+# Derivative parts will be calculated, then spin coefficient parts will be added. 
+maxwell:=Vector(4):
+for mu from 1 to 4 do
+  maxwell[1]:=maxwell[1]+m_contr[mu]*diff(fie1,koor[mu])-l_bar_contr[mu]*diff(fie0,koor[mu]):
+  maxwell[2]:=maxwell[2]+l_contr[mu]*diff(fie1,koor[mu])+m_bar_contr[mu]*diff(fie0,koor[mu]):
+  maxwell[3]:=maxwell[3]+m_bar_contr[mu]*diff(fie1tilde,koor[mu])+l_bar_contr[mu]*diff(fie0tilde,koor[mu]):
+  maxwell[4]:=maxwell[4]+l_contr[mu]*diff(fie1tilde,koor[mu])-m_contr[mu]*diff(fie0tilde,koor[mu]):
+od:
+maxwell[1]:=simplify(expand(combine(maxwell[1]-2*nptau*fie1-(2*conjugate(npepsilon)-conjugate(nprho))*fie0+npsigma*conjugate(fie0)))):
+maxwell[2]:=simplify(expand(combine(maxwell[2]-2*nprho*fie1+(2*npalpha-conjugate(nptau))*fie0+npkappa*conjugate(fie0)))):
+maxwell[3]:=simplify(expand(combine(maxwell[3]-2*conjugate(nppi)*fie1tilde+(nplambda-2*npgamma)*fie0tilde+conjugate(npmu)*conjugate(fie0tilde)))):
+maxwell[4]:=simplify(expand(combine(maxwell[4]-2*conjugate(nplambda)*fie1tilde-(nppi-2*npbeta)*fie0tilde+conjugate(npnu)*conjugate(fie0tilde)))):
+
+print(`----------1st Maxwell Equation----------`):
+print(maxwell[1]):
+print(`----------2nd Maxwell Equation----------`):
+print(maxwell[2]):
+print(`----------3rd Maxwell Equation----------`):
+print(maxwell[3]):
+print(`----------4th Maxwell Equation----------`):
+print(maxwell[4]):
+
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+
+print(`Output variable(s): maxwell vector`):
+end proc:
+
+#===================================================================================================================
+dirac:=proc()
+global dirac, SpinCon:
+itime:= time():
+gammamatricespless():
+grcalcalter(Chr(dn,dn,up),6,1):
+SpinCon:=Vector(4):
+for mu from 1 to 4 do   
+   SpinCon[mu]:=Matrix(4,4,0):
+   for nu from 1 to 4 do 
+    SpinCon[mu]:=SpinCon[mu]+(1/4)*gamma_covar[nu].map(diff,gamma_contr[nu],koor[mu]):
+   od: 
+od:
+for mu from 1 to 4 do
+   for nu from 1 to 4 do 
+      for rho from 1 to 4 do         
+		 SpinCon[mu]:=SpinCon[mu]+(1/4)*gamma_covar[nu].(grcomponent(Chr(dn,dn,up),[rho,mu,nu])*gamma_contr[rho]):
+   od:
+ od:
+od:
+for mu from 1 to 4 do
+ SpinCon[mu]:=map(simplify,map(expand,map(combine,map(simplify,map(expand,SpinCon[mu]))))):
+od:
+
+dirac:=Vector(4):
+
+psi:=Vector([psi1(koor[1],koor[2],koor[3],koor[4]),
+	         psi2(koor[1],koor[2],koor[3],koor[4]),
+			 psi3(koor[1],koor[2],koor[3],koor[4]),
+			 psi4(koor[1],koor[2],koor[3],koor[4])]):
+for mu from 1 to 4 do
+   dirac:=dirac+gamma_contr[mu].map(diff,psi,koor[mu])-gamma_contr[mu].SpinCon[mu].psi:
+od:
+
+print(`----------MASSLESS DIRAC EQUATIONS----------`):
+print(`----------1st Dirac Equation----------`):
+dirac[1]:=simplify(expand(combine(dirac[1]))):
+print(dirac[1]):
+print(`----------2nd Dirac Equation----------`):
+dirac[2]:=simplify(expand(combine(dirac[2]))):
+print(dirac[2]):
+print(`----------3rd Dirac Equation----------`):
+dirac[3]:=simplify(expand(combine(dirac[3]))):
+print(dirac[3]):
+print(`----------4th Dirac Equation----------`):
+dirac[4]:=simplify(expand(combine(dirac[4]))):
+print(dirac[4]):
+
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+
+print(`Output variable(s): dirac vector`):
+end proc:
+
+#===================================================================================================================
+coframe:=proc()
+global L,M,L_bar,M_bar:
+itime:= time():
+coframepless():
+print(`CO-FRAME IS GIVEN AS:`): 
+print(l=L):
+print(m=M):
+print(`Output variable(s): L,M,L_bar,M_bar`):
+
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+
+end proc:
+
+#===================================================================================================================
+riccirotcoeff:=proc()
+global npkappa,nptau,npsigma,nprho,nppi,npnu,npmu,nplambda,npepsilon,npgamma,npalpha,npbeta:
+itime:= time():
+riccirotcoeffpless():
+
+print(`NP RICCI ROTATION COEFFICIENTS`):
+ 
+
+print(`npkappa=`,npkappa):
+print(`nptau=`,nptau):
+print(`npsigma=`,npsigma):
+print(`nprho=`,nprho):
+print(`nppi=`,nppi):
+print(`npnu=`,npnu):
+print(`npmu=`,npmu):
+print(`nplambda=`,nplambda):
+print(`npepsilon=`,npepsilon):
+print(`npgamma=`,npgamma):
+print(`npalpha=`,npalpha):
+print(`npbeta=`,npbeta):
+
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+
+print(`Output variable(s): npkappa,nptau,npsigma,nprho,nppi,npnu,npmu,nplambda,npepsilon,npgamma,npalpha,npbeta`):
+end proc: 
+
+#===================================================================================================================
+tfricciscalar:=proc()
+global scalofcurv,tfricciscalar00,tfricciscalar01,tfricciscalar02,tfricciscalar10,tfricciscalar11,tfricciscalar12,tfricciscalar20,tfricciscalar21,tfricciscalar22:
+itime:= time():
+tfricciscalarpless():
+scalofcurv:=simplify(expand(grcomponent(Ricciscalar)/24)):
+
+print(`-------------------TRACE-FREE RICCI SCALARS-------------------`):
+
+
+print(`Trace free Ricci Scalar00=`,tfricciscalar00):
+print(`Trace free Ricci Scalar01=`,tfricciscalar01):
+print(`Trace free Ricci Scalar02=`,tfricciscalar02):
+print(`Trace free Ricci Scalar10=`,tfricciscalar10):
+print(`Trace free Ricci Scalar11=`,tfricciscalar11):
+print(`Trace free Ricci Scalar12=`,tfricciscalar12):
+print(`Trace free Ricci Scalar20=`,tfricciscalar20):
+print(`Trace free Ricci Scalar21=`,tfricciscalar21):
+print(`Trace free Ricci Scalar22=`,tfricciscalar22): 
+print(`Scalar of curvature=`,scalofcurv):
+
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+
+print(`Output variable(s): tfricciscalar00,tfricciscalar01,tfricciscalar02,tfricciscalar10,`):
+print(`tfricciscalar11,tfricciscalar12,tfricciscalar20,tfricciscalar21,tfricciscalar22,scalofcurv`):
+end proc:
+
+#===================================================================================================================
+basis2form:=proc()
+global L00,L01,L10,Ltilde0pr0pr,Ltilde0pr1pr,Ltilde1pr0pr:
+itime:= time():
+coframepless():
+
+print(`--------------------BASIS 2-FORMS--------------------`):
+L00:=simplify(expand((1/2)*(L &wedge L_bar+M &wedge M_bar))):
+L01:=simplify(expand(-L &wedge M)):
+L10:=simplify(expand(L_bar &wedge M_bar)):
+Ltilde0pr0pr:=simplify(expand((1/2)*(L &wedge L_bar-M &wedge M_bar))):
+Ltilde0pr1pr:=simplify(expand(L &wedge M_bar)):
+Ltilde1pr0pr:=simplify(expand(-L_bar &wedge M)):
+print(`Basis 2-form L00=`,L00):
+print(`Basis 2-form L01=`,L01):
+print(`Basis 2-form L10=`,L10):
+print(`Basis 2-form Ltilde0pr0pr=`,Ltilde0pr0pr):
+print(`Basis 2-form Ltilde0pr1pr=`,Ltilde0pr1pr):
+print(`Basis 2-form Ltilde1pr0pr=`,Ltilde1pr0pr):
+
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+
+print(`Output variable(s): L00,L01,L10,Ltilde0pr0pr,Ltilde0pr1pr,Ltilde1pr0pr`):
+end proc:
+
+#===================================================================================================================
+curv2form:=proc()
+global Theta00,Theta01,Theta10,Thetatilde0pr0pr,Thetatilde0pr1pr,Thetatilde1pr0pr:
+itime:= time():
+coframepless():weylscalarpless():tfricciscalarpless():
+grcalcalter(Ricciscalar,6,1):
+
+print(`--------------------CURVATURE 2-FORMS--------------------`):
+
+Theta00:=simplify(expand(-(weylscalar2-(1/24)*grcomponent(Ricciscalar)+tfricciscalar11)*(L &wedge L_bar)-
+		 (weylscalar2-(1/24)*grcomponent(Ricciscalar)-tfricciscalar11)*(M &wedge M_bar)-
+		 conjugate(weylscalar1)*(L &wedge M)+weylscalar1*(L_bar &wedge M_bar)-tfricciscalar10*(L_bar &wedge M)-
+		 tfricciscalar12*(L &wedge M_bar))):
+Theta01:=simplify(expand((weylscalar1+tfricciscalar01)*(L &wedge L_bar)+
+	     (weylscalar1-tfricciscalar01)*(M &wedge M_bar)+tfricciscalar02*(L &wedge M_bar)-
+	     (weylscalar2+2*(1/24)*grcomponent(Ricciscalar))*(L &wedge M)-weylscalar0*(L_bar &wedge M_bar)+tfricciscalar00*(L_bar &wedge M))):
+Theta10:=simplify(expand((conjugate(weylscalar1)-tfricciscalar21)*(L &wedge L_bar)+
+         (conjugate(weylscalar1)+tfricciscalar21)*(M &wedge M_bar)-tfricciscalar22*(L &wedge M_bar)+
+	     (weylscalar2+2*(1/24)*grcomponent(Ricciscalar))*(L_bar &wedge M_bar)+conjugate(weylscalar0)*(L &wedge M)-tfricciscalar20*(L_bar &wedge M))):
+Thetatilde0pr0pr:=simplify(expand(-(weylscalartilde2-(1/24)*grcomponent(Ricciscalar)+tfricciscalar11)*(L &wedge L_bar)+
+		          (weylscalartilde2-(1/24)*grcomponent(Ricciscalar)-tfricciscalar11)*(M &wedge M_bar)-
+		          weylscalartilde1*(L_bar &wedge M)+conjugate(weylscalartilde1)*(L &wedge M_bar)+tfricciscalar01*(L_bar &wedge M_bar)+
+		          tfricciscalar21*(L &wedge M))):
+Thetatilde0pr1pr:=simplify(expand((weylscalartilde1+tfricciscalar10)*(L &wedge L_bar)-
+	              (weylscalartilde1-tfricciscalar10)*(M &wedge M_bar)-tfricciscalar20*(L &wedge M)+
+	              (weylscalartilde2+2*(1/24)*grcomponent(Ricciscalar))*(L &wedge M_bar)+weylscalartilde0*(L_bar &wedge M)-tfricciscalar00*(L_bar &wedge M_bar))):
+Thetatilde1pr0pr:=simplify(expand((conjugate(weylscalartilde1)-tfricciscalar12)*(L &wedge L_bar)-
+                  (conjugate(weylscalartilde1)+tfricciscalar12)*(M &wedge M_bar)+tfricciscalar22*(L &wedge M)-
+	              (weylscalartilde2+2*(1/24)*grcomponent(Ricciscalar))*(L_bar &wedge M)-
+				  conjugate(weylscalartilde0)*(L &wedge M_bar)+tfricciscalar02*(L_bar &wedge M_bar))):
+
+print(`Curvature 2-form Theta00=`,Theta00):
+print(`Curvature 2-form Theta01=`,Theta01):
+print(`Curvature 2-form Theta10=`,Theta10):
+print(`Curvature 2-form Thetatilde0pr0pr=`,Thetatilde0pr0pr):
+print(`Curvature 2-form Thetatilde0pr1pr=`,Thetatilde0pr1pr):
+print(`Curvature 2-form Thetatilde1pr0pr=`,Thetatilde1pr0pr):
+
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+	
+print(`Output variable(s): Theta00, Theta01, Theta10, Thetatilde0pr0pr, Thetatilde0pr1pr, Thetatilde1pr0pr`):
+end proc:
+
+#===================================================================================================================
+topologicalnumbers:=proc()
+global eulernumber_integrand,hirzebruch_signature_integrand:
+itime:= time():
+weylscalarpless():tfricciscalarpless():coframepless():
+grcalcalter(Ricciscalar,6,1):
+print(`-------------------TOPOLOGICAL NUMBERS FOR THE COMPACT MANIFOLD-------------------`):
+print(`Euler number chi`):
+eulernumber_integrand1:=abs(weylscalar0)^2+4*abs(weylscalar1)^2+3*weylscalar2^2+abs(weylscalartilde0)^2+
+								 4*abs(weylscalartilde1)^2+3*weylscalartilde2^2-2*(abs(tfricciscalar00)^2+abs(tfricciscalar02)^2)-
+								 4*(abs(tfricciscalar01)^2+abs(tfricciscalar11)^2+abs(tfricciscalar12)^2-3*((1/24)*grcomponent(Ricciscalar))^2):
+eulernumber_integrand:=simplify(expand(eulernumber_integrand1*(L &wedge L_bar &wedge M &wedge M_bar))):
+print(`Integrand of the Euler number calculation=`,eulernumber_integrand):
+print(`Hirzebruch signature tau`):
+hirzebruch_signature_integrand1:=abs(weylscalar0)^2+4*abs(weylscalar1)^2+3*weylscalar2^2-abs(weylscalartilde0)^2-
+										  4*abs(weylscalartilde1)^2-3*weylscalartilde2^2:
+hirzebruch_signature_integrand:=simplify(expand(hirzebruch_signature_integrand1*(L &wedge L_bar &wedge M &wedge M_bar))):
+print(`Integrand of the Hirzebruch signature calculation=`,hirzebruch_signature_integrand):
+
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+
+print(`Output variable(s): eulernumber_integrand, hirzebruch_signature_integrand`):
+end proc:
+
+#===================================================================================================================
+conn1form:=proc()
+global GAMMA00,GAMMA01,GAMMA10,GAMMA11,GAMMAtilde0pr0pr,GAMMAtilde0pr1pr,GAMMAtilde1pr0pr,GAMMAtilde1pr1pr:
+itime:= time():
+coframepless():riccirotcoeffpless():
+print(`CONNECTION 1-FORMS`):
+GAMMA00:=simplify(expand(npepsilon*L_bar-conjugate(npepsilon)*L-npalpha*M+conjugate(npalpha)*M_bar)):
+GAMMA01:=simplify(expand(-nptau*L-npkappa*L_bar+nprho*M-npsigma*M_bar)):
+GAMMA10:=-conjugate(GAMMA01):
+GAMMA11:=-GAMMA00:
+GAMMAtilde0pr0pr:=simplify(expand(npgamma*L-conjugate(npgamma)*L_bar+npbeta*M_bar-conjugate(npbeta)*M)):
+GAMMAtilde0pr1pr:=simplify(expand(-conjugate(nppi)*L-conjugate(npnu)*L_bar-conjugate(npmu)*M+conjugate(nplambda)*M_bar)):
+GAMMAtilde1pr0pr:=-conjugate(GAMMAtilde0pr1pr):
+GAMMAtilde1pr1pr:=-GAMMAtilde0pr0pr:
+
+print(`connection 1-form GAMMA00=`,GAMMA00):
+print(`connection 1-form GAMMA01=`,GAMMA01):
+print(`connection 1-form GAMMA10=`,GAMMA10):
+print(`connection 1-form GAMMA11=`,GAMMA11):
+print(`connection 1-form GAMMA_tilde0'0'=`,GAMMAtilde0pr0pr):
+print(`connection 1-form GAMMA_tilde0'1'=`,GAMMAtilde0pr1pr):
+print(`connection 1-form GAMMA_tilde1'0'=`,GAMMAtilde1pr0pr):
+print(`connection 1-form GAMMA_tilde1'1'=`,GAMMAtilde1pr1pr):
+
+print(`Testing the (anti-)self duality...`):
+if (simplify(expand(GAMMA00+GAMMA01+GAMMA10+GAMMA11))=0) 
+ then print (`SELF DUAL GAUGE because all connection 1-forms without tilde are zero`):  
+end if:
+
+if (simplify(expand(GAMMAtilde0pr0pr+GAMMAtilde0pr1pr+GAMMAtilde1pr0pr+GAMMAtilde1pr1pr))=0) 
+ then print (`ANTI-SELF DUAL GAUGE because all connection 1-forms with tilde are zero`):  
+end if:
+
+calctime:=time()-itime:
+print(`This calculation took`,calctime,`seconds`):
+
+print(`Output variable(s): GAMMA00,GAMMA01,GAMMA10,GAMMA11,GAMMAtilde0pr0pr,GAMMAtilde0pr1pr,GAMMAtilde1pr0pr,GAMMAtilde1pr1pr`):
+end proc:
+
+#===================================================================================================================
+#===================================================================================================================
+# The procedures below will be used within the other procedures. 
+# The only difference from their first definition is that "-pless" procedures do not show their results other than test results. 
+riccirotcoeffpless:=proc()
+global npkappa,nptau,npsigma,nprho,nppi,npnu,npmu,nplambda,npepsilon,npgamma,npalpha,npbeta:
+grcalcalter(Chr(dn,dn,up),6,1):
+npkappa1:=0:npkappa2:=0:npkappa:=0:
+nptau1:=0:nptau2:=0:nptau:=0:
+npsigma1:=0:npsigma2:=0:npsigma:=0:
+nprho1:=0:nprho2:=0:nprho:=0:
+nppi1:=0:nppi2:=0:nppi:=0:
+npnu1:=0:npnu2:=0:npnu:=0:
+npmu1:=0:npmu2:=0:npmu:=0:
+nplambda1:=0:nplambda2:=0:nplambda:=0:
+npepsilon1:=0:npepsilon2:=0:npepsilon:=0:
+npgamma1:=0:npgamma2:=0:npgamma:=0:
+npalpha1:=0:npalpha2:=0:npalpha:=0:
+npbeta1:=0:npbeta2:=0:npbeta:=0:
+for mu from 1 to 4 do
+ for nu from 1 to 4 do
+   npkappa1:=npkappa1+diff(l_covar[mu],koor[nu])*m_contr[mu]*l_contr[nu]:
+   nptau1:=nptau1+diff(l_covar[mu],koor[nu])*m_contr[mu]*l_bar_contr[nu]:
+   npsigma1:=npsigma1+diff(l_covar[mu],koor[nu])*m_contr[mu]*m_contr[nu]:
+   nprho1:=nprho1+diff(l_covar[mu],koor[nu])*m_contr[mu]*m_bar_contr[nu]:
+   nppi1:=nppi1+diff(m_covar[mu],koor[nu])*l_bar_contr[mu]*l_contr[nu]:
+   npnu1:=npnu1+diff(m_covar[mu],koor[nu])*l_bar_contr[mu]*l_bar_contr[nu]:
+   npmu1:=npmu1+diff(m_covar[mu],koor[nu])*l_bar_contr[mu]*m_contr[nu]:
+   nplambda1:=nplambda1+diff(m_covar[mu],koor[nu])*l_bar_contr[mu]*m_bar_contr[nu]:
+   npepsilon1:=npepsilon1+(diff(l_covar[mu],koor[nu])*l_bar_contr[mu]*l_contr[nu]-diff(m_bar_covar[mu],koor[nu])*m_contr[mu]*l_contr[nu]):
+   npgamma1:=npgamma1+(diff(l_covar[mu],koor[nu])*l_bar_contr[mu]*l_bar_contr[nu]+diff(m_bar_covar[mu],koor[nu])*m_contr[mu]*l_bar_contr[nu]):
+   npalpha1:=npalpha1+(diff(l_covar[mu],koor[nu])*l_bar_contr[mu]*m_bar_contr[nu]-diff(m_bar_covar[mu],koor[nu])*m_contr[mu]*m_bar_contr[nu]):
+   npbeta1:=npbeta1+(diff(l_covar[mu],koor[nu])*l_bar_contr[mu]*m_contr[nu]+diff(m_bar_covar[mu],koor[nu])*m_contr[mu]*m_contr[nu]):
+  od:
+od:
+for mu from 1 to 4 do
+ for nu from 1 to 4 do
+   for rho from 1 to 4 do
+npkappa2:=npkappa2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho]))*l_covar[rho]*m_contr[mu]*l_contr[nu]:
+nptau2:=nptau2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho]))*l_covar[rho]*m_contr[mu]*l_bar_contr[nu]:
+npsigma2:=npsigma2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho]))*l_covar[rho]*m_contr[mu]*m_contr[nu]:
+nprho2:=nprho2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho]))*l_covar[rho]*m_contr[mu]*m_bar_contr[nu]:
+nppi2:=nppi2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho]))*m_covar[rho]*l_bar_contr[mu]*l_contr[nu]:
+npnu2:=npnu2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho]))*m_covar[rho]*l_bar_contr[mu]*l_bar_contr[nu]:
+npmu2:=npmu2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho]))*m_covar[rho]*l_bar_contr[mu]*m_contr[nu]:
+nplambda2:=nplambda2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho]))*m_covar[rho]*l_bar_contr[mu]*m_bar_contr[nu]: 
+npepsilon2:=npepsilon2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho])*l_covar[rho]*l_bar_contr[mu]*l_contr[nu]-grcomponent(Chr(dn,dn,up),[mu,nu,rho])*m_bar_covar[rho]*m_contr[mu]*l_contr[nu]):
+npgamma2:=npgamma2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho])*l_covar[rho]*l_bar_contr[mu]*l_bar_contr[nu]+grcomponent(Chr(dn,dn,up),[mu,nu,rho])*m_bar_covar[rho]*m_contr[mu]*l_bar_contr[nu]):
+npalpha2:=npalpha2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho])*l_covar[rho]*l_bar_contr[mu]*m_bar_contr[nu]-grcomponent(Chr(dn,dn,up),[mu,nu,rho])*m_bar_covar[rho]*m_contr[mu]*m_bar_contr[nu]):
+npbeta2:=npbeta2+(grcomponent(Chr(dn,dn,up),[mu,nu,rho])*l_covar[rho]*l_bar_contr[mu]*m_contr[nu]+grcomponent(Chr(dn,dn,up),[mu,nu,rho])*m_bar_covar[rho]*m_contr[mu]*m_contr[nu]):
+   od:
+ od:
+od:
+npkappa:=simplify(simplify(expand(npkappa1-npkappa2))):
+nptau:=simplify(simplify(expand(nptau1-nptau2))):
+npsigma:=simplify(simplify(expand(npsigma1-npsigma2))):
+nprho:=simplify(simplify(expand(nprho1-nprho2))):
+nppi:=simplify(simplify(expand(nppi1-nppi2))):
+npnu:=simplify(simplify(expand(npnu1-npnu2))):
+npmu:=simplify(simplify(expand(npmu1-npmu2))):
+nplambda:=simplify(simplify(expand(nplambda1-nplambda2))):
+npepsilon:=simplify(simplify(expand((1/2)*(npepsilon1-npepsilon2)))):
+npgamma:=simplify(simplify(expand((1/2)*(npgamma1-npgamma2)))):
+npalpha:=simplify(simplify(expand((-1/2)*(npalpha1-npalpha2)))):
+npbeta:=simplify(simplify(expand((1/2)*(npbeta1-npbeta2)))):
+end proc: 
+gammamatricespless:=proc()
+global gamma_contr,gamma_covar:
+gamma_contr:=Vector(4):
+gamma_covar:=Vector(4):
+for mu from 1 to 4 do 
+  gamma_contr[mu]:=sqrt(2)*Matrix([[     0,                  0,           l_bar_contr[mu], -m_bar_contr[mu] ],
+                                  [     0,                  0,           m_contr[mu],      l_contr[mu]     ],
+								  [ l_contr[mu],    m_bar_contr[mu],          0,                  0        ],
+								  [-m_contr[mu],    l_bar_contr[mu],          0,                  0        ]]):
+								  
+  gamma_contr[mu]:=map(simplify,(map(expand,gamma_contr[mu])));
+od:
+i:=10:
+test3:=0:
+for mu from 1 to 4 do
+   for nu from 1 to 4 do  
+      i:=i+1: 
+      test[i]:=0:
+	  test[i]:=simplify(expand(grcomponent(g(up,up),[mu,nu])
+		                                   -((1/2)*(gamma_contr[mu].gamma_contr[nu]+gamma_contr[nu].gamma_contr[mu])[1,1]))):
+	  test3:=test3+test[i]:
+   od:
+od:
+if (simplify(expand(test3))=0) 
+ then print (`Test 1-> Successful, The Dirac matrices are correct`): 
+ else ERROR (`Test 1-> The Dirac matrices are not correct, check the definitions`):  
+end if:
+for mu from 1 to 4 do
+   for nu from 1 to 4 do
+     gamma_covar[mu]:=simplify(expand(gamma_covar[mu]+grcomponent(g(dn,dn),[mu,nu])*gamma_contr[nu])):
+   od:
+od:
+testi:=0:
+test4:=0:
+for mu from 1 to 4 do
+   for nu from 1 to 4 do 
+      testi:=simplify(expand(grcomponent(g(dn,dn),[mu,nu])
+	                                     -((1/2)*(gamma_covar[mu].gamma_covar[nu]+gamma_covar[nu].gamma_covar[mu])[1,1]))):
+      test4:=test4+testi:
+      testi:=0:
+   od:
+od:
+if (simplify(expand(test4))=0) 
+ then print (`Test 2-> Successful, The Dirac matrices are correct`): 
+ else ERROR (`Test 2-> The Dirac matrices are not correct, check the definitions`): 
+end if:
+end proc:
+coframepless:=proc()
+global L,M,L_bar,M_bar:
+L:=simplify(expand(l_covar[1]*dx1+l_covar[2]*dx2+l_covar[3]*dx3+l_covar[4]*dx4)):
+L_bar:=simplify(expand(l_bar_covar[1]*dx1+l_bar_covar[2]*dx2+l_bar_covar[3]*dx3+l_bar_covar[4]*dx4)):
+M:=simplify(expand(m_covar[1]*dx1+m_covar[2]*dx2+m_covar[3]*dx3+m_covar[4]*dx4)):
+M_bar:=simplify(expand(m_bar_covar[1]*dx1+m_bar_covar[2]*dx2+m_bar_covar[3]*dx3+m_bar_covar[4]*dx4)):
+end proc:
+weylscalarpless:=proc()
+global weylscalar0,weylscalar1,weylscalar2,weylscalartilde0,weylscalartilde1,weylscalartilde2:
+grcalc(C(dn,dn,dn,dn)):
+for mu from 1 to 4 do
+ for nu from 1 to 4 do
+  for rho from 1 to 4 do
+   for sigma from 1 to 4 do
+	C(mu,nu,rho,sigma):=0:	
+	C(mu,nu,rho,sigma):=simplify(expand((grcomponent(C(dn,dn,dn,dn),[mu,nu,rho,sigma]))));
+   od:
+  od:
+ od:
+od:
+weylscalar0:=0:
+weylscalar1:=0:
+weylscalar2:=0:
+weylscalartilde0:=0:
+weylscalartilde1:=0:
+weylscalartilde2:=0:
+for mu from 1 to 4 do
+ for nu from 1 to 4 do
+  for sigma from 1 to 4 do
+   for tau from 1 to 4 do
+    weylscalar0:=weylscalar0+C(mu,nu,sigma,tau)*l_contr[mu]*m_contr[nu]*l_contr[sigma]*m_contr[tau]:
+    weylscalar1:=weylscalar1+C(mu,nu,sigma,tau)*l_contr[mu]*l_bar_contr[nu]*l_contr[sigma]*m_contr[tau]:
+	weylscalar2:=weylscalar2+C(mu,nu,sigma,tau)*l_contr[mu]*m_contr[nu]*l_bar_contr[sigma]*m_bar_contr[tau]:
+    weylscalartilde0:=weylscalartilde0+C(mu,nu,sigma,tau)*l_contr[mu]*m_bar_contr[nu]*l_contr[sigma]*m_bar_contr[tau]:
+	weylscalartilde1:=weylscalartilde1+C(mu,nu,sigma,tau)*l_contr[mu]*l_bar_contr[nu]*m_bar_contr[tau]*l_contr[sigma]:
+    weylscalartilde2:=weylscalartilde2+C(mu,nu,sigma,tau)*l_contr[mu]*m_bar_contr[nu]*l_bar_contr[sigma]*m_contr[tau]:	
+   od:
+  od:
+ od:
+od:
+weylscalar0:=simplify(expand(weylscalar0)):
+weylscalar1:=simplify(expand(weylscalar1)):
+weylscalar2:=simplify(expand(weylscalar2)):
+weylscalartilde0:=simplify(expand(weylscalartilde0)):
+weylscalartilde1:=simplify(expand(weylscalartilde1)):
+weylscalartilde2:=simplify(expand(weylscalartilde2)):
+end proc:
+tfricciscalarpless:=proc()
+global tfricciscalar00,tfricciscalar01,tfricciscalar02,tfricciscalar10,tfricciscalar11,tfricciscalar12,tfricciscalar20,tfricciscalar21,tfricciscalar22:
+grcalcalter(R(dn,dn),6,1):grcalcalter(Ricciscalar,6,1):
+for mu from 1 to 4 do
+ for nu from 1 to 4 do
+    R(mu,nu):=0:
+	R(mu,nu):=simplify(grcomponent(R(dn,dn),[mu,nu]));
+ od:
+od:
+tfricciscalar00:=0:
+tfricciscalar01:=0:
+tfricciscalar02:=0:
+tfricciscalar10:=0:
+tfricciscalar11:=0:
+for mu from 1 to 4 do
+ for nu from 1 to 4 do
+    tfricciscalar00:=tfricciscalar00+(1/2)*(R(mu,nu)*l_contr[mu]*l_contr[nu]):
+    tfricciscalar01:=tfricciscalar01+(1/2)*(R(mu,nu)*l_contr[mu]*m_contr[nu]):
+	tfricciscalar02:=tfricciscalar02+(1/2)*(R(mu,nu)*m_contr[mu]*m_contr[nu]):
+    tfricciscalar10:=tfricciscalar10+(1/2)*(R(mu,nu)*l_contr[mu]*m_bar_contr[nu]):
+	tfricciscalar11:=tfricciscalar11+(1/2)*(R(mu,nu)*l_contr[mu]*l_bar_contr[nu]):	
+ od:
+od:
+tfricciscalar00:=simplify(expand(tfricciscalar00)):
+tfricciscalar01:=simplify(expand(tfricciscalar01)):
+tfricciscalar02:=simplify(expand(tfricciscalar02)):
+tfricciscalar10:=simplify(expand(tfricciscalar10)):
+tfricciscalar11:=simplify(expand(tfricciscalar11+3*(1/24)*grcomponent(Ricciscalar))):
+tfricciscalarbar22:=tfricciscalar00:
+tfricciscalarbar20:=tfricciscalar02:
+tfricciscalarbar21:=-tfricciscalar01:
+tfricciscalarbar12:=-tfricciscalar10:
+tfricciscalar12:=conjugate(tfricciscalarbar12):
+tfricciscalar21:=conjugate(tfricciscalarbar21):
+tfricciscalar20:=conjugate(tfricciscalarbar20):
+tfricciscalar22:=conjugate(tfricciscalarbar22):
+end proc:

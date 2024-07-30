@@ -1,0 +1,72 @@
+# This is the input file of the NPinstanton program
+# This file must be in the "C:/npinstanton" directory.
+# Otherwise, the user should manually set the directory.
+# Entries should be in the Maple format
+
+#-----------------------------------------------------------------------------------------
+# (1)(1)(1)(1)(1)(1)(1)
+# Enter the coordinates below:
+
+firstcoordinate:= r:
+secondcoordinate:= theta:
+thirdcoordinate:= phi:
+fourthcoordinate:= xi:
+
+#------------------------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------------------
+# (2)(2)(2)(2)(2)(2)(2)
+# Enter the general definitions here:
+
+assume(a::real): # Setting the properties explicitly is useful for simplication. 
+A:=sqrt(1-(a/r)^4): # This term will be used many times. 
+
+#------------------------------------------------------------------------------------------
+# (3)(3)(3)(3)(3)(3)(3)
+# Enter the components of the covariant NP legs below:
+# Example: l_covar[1]:1st component of the covariant l leg
+# and l_bar_covar[1]:=complex conjugate of l_covar[1]
+# Maple does not do the complex simplifications because they
+# need assumptions that may cause wrong calculations. The best
+# way to define the legs is to give the both by hand. 
+
+l_covar[1]:=1/(sqrt(2)*A):
+l_bar_covar[1]:=1/(sqrt(2)*A):
+l_covar[2]:=0:
+l_bar_covar[2]:=0:
+l_covar[3]:=-I*r*A*cos(theta)/(2*sqrt(2)):
+l_bar_covar[3]:=I*r*A*cos(theta)/(2*sqrt(2)):
+l_covar[4]:=-I*r*A/(2*sqrt(2)):
+l_bar_covar[4]:=I*r*A/(2*sqrt(2)):
+m_covar[1]:=0:
+m_bar_covar[1]:=0:
+m_covar[2]:=r*exp(-I*xi)/(sqrt(2)*2):
+m_bar_covar[2]:=r*exp(I*xi)/(sqrt(2)*2):
+m_covar[3]:=I*r*exp(-I*xi)*sin(theta)/(sqrt(2)*2):
+m_bar_covar[3]:=-I*r*exp(I*xi)*sin(theta)/(sqrt(2)*2):
+m_covar[4]:=0:
+m_bar_covar[4]:=0:
+
+#-------------------------------------------------------------------------------
+
+
+
+#-------------------------------------------------------------------------------
+# (4)(4)(4)(4)(4)(4)(4)
+# Enter the spinor components
+# If you do not want to calculate the Dirac equation, skip this section
+
+spinorcomponent1:=exp(I*(m+(1/2))*xi)*exp(I*n*phi)*psi1(r,theta):
+spinorcomponent2:=exp(I*(m-(1/2))*xi)*exp(I*n*phi)*psi2(r,theta):
+spinorcomponent3:=exp(I*(m+(1/2))*xi)*f(r)*exp(I*n*phi)*psi3(r,theta):
+spinorcomponent4:=exp(I*(m-(1/2))*xi)*f(r)*exp(I*n*phi)*psi4(r,theta):
+
+#--------------------------------------------------------------------
+# (5)(5)(5)(5)(5)(5)(5)
+# Enter the scalar function
+# If you do not want to calculate scalar operator, skip this section
+
+scalarfunction:=exp(I*m*xi)*exp(I*n*phi)*Phi(r,theta):
+
+#--------------------------------------------------------------------
